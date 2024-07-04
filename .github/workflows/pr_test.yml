@@ -15,7 +15,6 @@ jobs:
       pull-requests: write
       checks: write
     env:
-      QODANA_CACHE_DIR: ${{ runner.temp }}/qodana/caches
       JASYPT_PASSWORD: ${{ secrets.JASYPT_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
@@ -46,6 +45,8 @@ jobs:
           key: qodana-cache-${{ hashFiles(format('{0}/.m2/**', env.QODANA_CACHE_DIR), format('{0}/gradle/wrapper/**', env.QODANA_CACHE_DIR), format('{0}/gradle/caches/**', env.QODANA_CACHE_DIR)) }}
           restore-keys: |
             qodana-cache-
+        env:
+          QODANA_CACHE_DIR: ${{ runner.temp }}/qodana/caches
 
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2024.1
