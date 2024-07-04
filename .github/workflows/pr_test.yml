@@ -37,18 +37,17 @@ jobs:
       - name: Run tests with Gradle
         run: ./gradlew test --no-daemon
 
-      - name: Cache Qodana dependencies
-        uses: actions/cache@v4
+      - name: Restore cached qodana dependencies
+        uses: actions/cache/restore@v4
         with:
           path: |
             ${{ env.QODANA_CACHE_DIR }}/.m2
             ${{ env.QODANA_CACHE_DIR }}/gradle/wrapper
             ${{ env.QODANA_CACHE_DIR }}/gradle/caches
           key: qodana-cache-${{ hashFiles(format('{0}/.m2/**', env.QODANA_CACHE_DIR), format('{0}/gradle/wrapper/**', env.QODANA_CACHE_DIR), format('{0}/gradle/caches/**', env.QODANA_CACHE_DIR)) }}
-          restore-keys: |
-            qodana-cache-
+          restore-keys: qodana-cache-
 
-      - name: 'Qodana Scan'
+      - name: Perform qodana analysis
         uses: JetBrains/qodana-action@v2024.1
         with:
           use-caches: false
@@ -56,3 +55,12 @@ jobs:
           cache-dir: ${{ env.QODANA_CACHE_DIR }}
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+
+      - name: Save qodana dependencies to cache
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ${{ env.QODANA_CACHE_DIR }}/.m2
+            ${{ env.QODANA_CACHE_DIR }}/gradle/wrapper
+            ${{ env.QODANA_CACHE_DIR }}/gradle/caches
+          key: qodana-cache-${{ hashFiles(format('{0}/.m2/**', env.QODANA_CACHE_DIR), format('{0}/gradle/wrapper/**', env.QODANA_CACHE_DIR), format('{0}/gradle/caches/**', env.QODANA_CACHE_DIR)) }}
