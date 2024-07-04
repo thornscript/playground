@@ -5,6 +5,6 @@ import jakarta.validation.constraints.Size;
 
 public class Car {
     @NotNull
-    @Size(min = 14, max = 2)
+    @Size(min = 14, max = 3)
     private String licensePlate;
 }
