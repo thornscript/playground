@@ -1,7 +1,6 @@
 name: PR Test Validation
 
 on:
-  workflow_dispatch:
   pull_request:
   push:
     branches:
@@ -15,9 +14,13 @@ jobs:
       contents: write
       pull-requests: write
       checks: write
+    env:
+      QODANA_CACHE_DIR: ${{ runner.temp }}/qodana/caches
+      JASYPT_PASSWORD: ${{ secrets.JASYPT_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
         with:
+          # Limiting history to PR commits only; full history scan seems excessive for Qodana
           fetch-depth: ${{ github.event.pull_request.commits }}
 
       - name: Set up JDK 21
@@ -27,13 +30,26 @@ jobs:
           distribution: 'corretto'
           cache: 'gradle'
 
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run tests with Gradle
+        run: ./gradlew test --no-daemon
+
+      - name: Cache Qodana dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.QODANA_CACHE_DIR }}/.m2
+            ${{ env.QODANA_CACHE_DIR }}/gradle/wrapper
+            ${{ env.QODANA_CACHE_DIR }}/gradle/caches
+          key: qodana-cache-${{ hashFiles(format('{0}/.m2/**', env.QODANA_CACHE_DIR), format('{0}/gradle/wrapper/**', env.QODANA_CACHE_DIR), format('{0}/gradle/caches/**', env.QODANA_CACHE_DIR)) }}
+          restore-keys: |
+            qodana-cache-
+
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2024.1
         with:
-          cache-default-branch-only: true
-          primary-cache-key: qodana-2024.1-${{ github.ref }}-${{ github.sha }}
-          additional-cache-key: |
-            qodana-2024.1-${{ github.ref }}
-            qodana-2024.1-
+          use-caches: false
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
