@@ -15,7 +15,6 @@ jobs:
       pull-requests: write
       checks: write
     env:
-      QODANA_CACHE_DIR: ${{ runner.temp }}/qodana/caches
       JASYPT_PASSWORD: ${{ secrets.JASYPT_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
@@ -36,18 +35,12 @@ jobs:
       - name: Run tests with Gradle
         run: ./gradlew test --no-daemon
 
-      - name: Cache Qodana dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ env.QODANA_CACHE_DIR }}/.m2
-            ${{ env.QODANA_CACHE_DIR }}/gradle/wrapper
-            ${{ env.QODANA_CACHE_DIR }}/gradle/caches
-          key: qodana-cache-${{ hashFiles(format('{0}/.m2/**', env.QODANA_CACHE_DIR), format('{0}/gradle/wrapper/**', env.QODANA_CACHE_DIR), format('{0}/gradle/caches/**', env.QODANA_CACHE_DIR)) }}
-          restore-keys: |
-            qodana-cache-
+      - name: Copy .gradle directory
+        run: |
+          mkdir -p ${{ runner.temp }}/qodana/caches/gradle
+          cp -r ~/.gradle/* ${{ runner.temp }}/qodana/caches/gradle/
 
-      - name: 'Qodana Scan'
+      - name: Perform qodana analysis
         uses: JetBrains/qodana-action@v2024.1
         with:
           use-caches: false
