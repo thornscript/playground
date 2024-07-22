@@ -11,8 +11,8 @@ jobs:
   pr-test:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      actions: read
+      contents: write
+      pull-requests: write
       checks: write
     env:
       JASYPT_PASSWORD: ${{ secrets.JASYPT_PASSWORD }}
@@ -36,9 +36,8 @@ jobs:
         run: ./gradlew test --no-daemon
 
       - name: Publish Test Report
-        uses: dorny/test-reporter@v1
+        uses: mikepenz/action-junit-report@v4
         if: success() || failure()
         with:
-          name: 'Test Reports'
-          path: '**/build/test-results/test/TEST-*.xml'
-          reporter: java-junit
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+
