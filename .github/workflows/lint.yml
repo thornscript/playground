@@ -32,3 +32,10 @@ jobs:
           SAVE_SUPER_LINTER_SUMMARY: true
           SAVE_SUPER_LINTER_OUTPUT: true
           IGNORE_GITIGNORED_FILES: true
+
+      - name: Post artifact
+        if: always()
+        uses: actions/upload-artifact@v4.5.0
+        with:
+          name: lint results
+          path: ${{ github.workspace }}/super-linter-output/super-linter-summary.md
