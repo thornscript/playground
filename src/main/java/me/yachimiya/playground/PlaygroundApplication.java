@@ -6,9 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class PlaygroundApplication {
 
-    // 잡다한 수정17
     public static void main(String[] args) {
         SpringApplication.run(PlaygroundApplication.class, args);
     }
 
+   // 킹받는 들여쓰기
+    // 공백 2줄
 }
