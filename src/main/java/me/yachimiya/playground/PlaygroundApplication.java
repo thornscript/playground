@@ -10,6 +10,6 @@ public class PlaygroundApplication {
         SpringApplication.run(PlaygroundApplication.class, args);
     }
 
-   // 킹받는 들여쓰기
+   Long 이걸_참네 = 1L;
     // 공백 2줄
 }
