@@ -29,4 +29,6 @@ jobs:
           VALIDATE_JAVA: true
           LINTER_RULES_PATH: codestyle
           JAVA_FILE_NAME: custom-google-checks.xml
+          SAVE_SUPER_LINTER_SUMMARY: true
+          SAVE_SUPER_LINTER_OUTPUT: true
           IGNORE_GITIGNORED_FILES: true
