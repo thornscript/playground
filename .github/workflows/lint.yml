@@ -27,5 +27,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_JAVA: true
+          LINTER_RULES_PATH: /
           JAVA_FILE_NAME: codestyle/custom-google-checks.xml
           IGNORE_GITIGNORED_FILES: true
